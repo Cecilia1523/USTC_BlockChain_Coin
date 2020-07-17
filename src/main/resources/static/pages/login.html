@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>科大软币</title>
+    <meta name="description" content="科大软币">
+    <meta name="keywords" content="科大软币">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body class="hold-transition skin-purple sidebar-mini">
+<div id="app">
+    <div class="login-container">
+        <div class="loginBox">
+            <form method="post" class="login-form" id="loginForm">
+                <div class="title-container">
+                    <div class="logoInfo clearfix">
+<!--                        <em class="logo"></em>-->
+                        <img src="../img/loginLogo.png">
+                    </div>
+                </div>
+                <div>
+                        <span class="svg-container svg-container_login">
+                          <span class="user"></span>
+                        </span>
+                    <input type="text" v-model="user.username" id="username" name="username" placeholder="请输入用户名"/>
+                </div>
+                <div>
+                        <span class="svg-container">
+                          <span class="username"></span>
+                        </span>
+                    <input type="password"  v-model="user.password" id="password" name="password" placeholder="请输入密码"/>
+                </div>
+                <input type="button" style="display:block;margin:20px auto" style="width:100px;margin-bottom:30px;"
+                       value="登录" @click="login()"></input>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script src="../js/jquery-heima-0.0.1.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            backend_url: "http://localhost:8888",
+            user:{}
+        },
+        methods: {
+            //登录
+            login() {
+                axios.post("/user/login",this.user).then((response)=>{
+                    if (response.data.flag){
+                        //登录成功
+                        window.location.href="/pages/main.html";
+                    }else{
+                        this.$message.error(response.data.message);
+                    }
+                })
+            }
+        }
+    });
+</script>
+</html>

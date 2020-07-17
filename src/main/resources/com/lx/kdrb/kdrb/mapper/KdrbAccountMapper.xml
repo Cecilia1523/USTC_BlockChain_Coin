@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.kdrb.kdrb.mapper.KdrbAccountMapper">
+
+    <insert id="insertAccount" parameterType="com.lx.kdrb.kdrb.domain.KdrbAccount">
+         insert into kdrb_account (id, uid, address, priKey, balance)
+VALUES (#{id},#{uid},#{address},#{priKey},#{balance})
+    </insert>
+
+    <select id="selectAccountByUid" parameterType="String" resultType="com.lx.kdrb.kdrb.domain.KdrbAccount">
+        select id, uid, address, priKey, balance
+from kdrb_account
+where uid=#{uid}
+    </select>
+</mapper>

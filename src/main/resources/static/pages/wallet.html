@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>科大软币</title>
+    <meta name="description" content="传智健康">
+    <meta name="keywords" content="传智健康">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="hold-transition">
+<div id="app">
+    <div class="content-header">
+        <h1>科大软币<small>申请钱包</small></h1>
+        <el-breadcrumb separator-class="el-icon-arrow-right" class="breadcrumb">
+            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+            <el-breadcrumb-item>申请钱包</el-breadcrumb-item>
+        </el-breadcrumb>
+    </div>
+    <div class="app-container">
+        <div class="box">
+
+            <div class="add-form">
+                <!--                <font size="50">我的余额</font>-->
+                <!--                <font size="50">{{balance}}</font>-->
+                <!--                <font size="50">USTCoins</font>-->
+                <el-form ref="formData" :model="formData" :rules="rules" label-position="right" label-width="100px">
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="手机号">
+                                <el-input v-model="formData.phone"></el-input>
+                                <input style="font-size: x-small;" id="validateCodeButton" @click="sendValidateCode()"
+                                       type="button" value="发送验证码">
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="验证码">
+                                <el-input v-model="formData.code"></el-input>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                </el-form>
+                <div slot="footer" class="dialog-footer">
+                    <el-button type="primary" @click="handle()">确定</el-button>
+
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script src="../js/healthmobile.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script>
+    var vue = new Vue({
+        el: '#app',
+        data: {
+            backend_url: "http://localhost:8888",
+            formData: {},//表单数据
+
+        },
+        //钩子函数，VUE对象初始化完成后自动执行
+        created() {
+
+        },
+        methods: {
+            sendValidateCode() {
+                //获取用户输入的手机号
+                var phone = this.formData.phone;
+                //校验手机号输入是否正确
+                if (!checkTelephone(phone)) {
+                    this.$message.error('请输入正确的手机号');
+                    return false;
+                }
+                validateCodeButton = $("#validateCodeButton")[0];
+
+                axios.get("/sendMessage/sendApplyWalletMessage/" + phone).then((response) => {
+                    if (response.data.flag) {
+                        //验证码发送成功
+                        clock = window.setInterval(doLoop, 1000); //一秒执行一次
+                        this.$message(response.data.message);
+                    } else {
+                        this.$message.error('验证码发送失败，请检查手机号输入是否正确');
+                    }
+                });
+            },
+
+            handle() {
+                axios.post("/wallet/applyWallet", this.formData).then((response) => {
+                    if (response.data.flag) {
+                        this.$message(response.data.message)
+                        //申请钱包
+                        this.$message(response.data.message);
+                        parent.location.href = "/pages/main.html"
+                    }else{
+                        this.$message.error(response.data.message);
+                    }
+                });
+
+            },
+        }
+    })
+</script>
+</html>

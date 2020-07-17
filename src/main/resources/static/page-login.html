@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Main CSS-->
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!-- Font-icon css-->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>admin</title>
+    <script type="text/javascript" src="/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+     
+   function changeImg(){
+	       $("#yzmImg").attr("src","/USTCOIN/checkImgServlet?"+Math.random());
+	   
+   		}	
+    
+  //计时函数
+    function timeC(){
+    	var timeleft=60;
+        var btn=$("#yzm");
+        
+	  function timeCount(){
+		     
+             timeleft=timeleft-1;
+             
+             if (timeleft>0){
+             btn.val(timeleft+"秒后重发");
+             setTimeout(timeCount,1000);
+             
+             }
+             else {
+              btn.val("重新发送");
+              timeleft=60;   //重置等待时间
+              btn.removeAttr("disabled");
+             }
+           }
+	  timeCount();
+	  
+  }
+
+    //事件处理函数
+    function fn1(){
+    	var reg = /^1[0-9]{10}$/;
+ 	   var phone=$("#phone");
+ 	   var btn=$("#yzm");
+ 	   if (reg.test(phone.val())){
+ 		   btn.attr("disabled",true);
+ 		  $.post(
+ 		  			"/USTCOIN/getSMS",//url地址
+ 		  			{"phone":phone.val()},
+ 		  			function(data){
+ 		  				alert(data);
+ 		  			},
+ 		  			);
+ 		        timeC();
+            }
+          else{
+            alert("请输入正确的手机号！");
+          }
+        
+        }
+    //检查密码项是否为空
+    function checkPassword(){
+    	var password=$("#newpassword");
+    	if(password.val()==""){
+    		password.attr("placeholder","密码不能为空");
+    		password.attr("style","border:2px solid red;");
+    	}else{
+    		password.removeAttr("style");
+    	}
+    	
+    }
+    //检查重复密码与新密码是否一致
+    
+    function checkRepassword(){
+    	var password=$("#newpassword");
+    	var repassword=$("#repassword");
+    	var msg=$("#msg");
+    	
+    	if(repassword.val()==password.val()){
+    		msg.attr("style","display:none;");
+    		password.removeAttr("style");
+    		repassword.removeAttr("style");
+    	}else{
+    		password.attr("style","border:2px solid red;");
+    		repassword.attr("style","border:2px solid red;");
+    		msg.removeAttr("style");
+    	}
+    	
+    }
+    
+    
+    </script>
+  </head>
+  <body>
+    <section class="material-half-bg">
+      <div class="cover"></div>
+    </section>
+    <section class="login-content">
+      <div class="logo">
+        <h1>中国科大软币登录</h1>
+      </div>
+      <div class="login-box">
+        <form class="login-form" action="/USTCOIN/login" method="post">
+          <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>管理员登录</h3>
+          <div class="form-group">
+            <label class="control-label">账号</label>
+            <input class="form-control" type="text" name="username"  id="username" placeholder="用户名" autofocus>
+          </div>
+          <div class="form-group">
+            <label class="control-label">密码</label>
+            <input class="form-control" type="password" name="password"  id="password" placeholder="Password">
+          </div>
+          <div class="form-group">
+             <div>
+            <label class="control-label">验证码</label>
+            </div>
+            <div>
+            <input class="form-control" type="text" name="yzm" id="yzm" style="width:140px;float:left;" >
+            <img src="/USTCOIN/checkImgServlet" style="flaot:left;padding-top:3px" onclick="changeImg()" id="yzmImg">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="utility">
+              <p class="semibold-text mb-2"><a href="#" data-toggle="flip">忘记密码</a></p>
+            </div>
+          </div>
+          <div class="form-group btn-container">
+          
+           <input type="submit" class="btn btn-primary btn-block" value="登录">
+          </div>
+        </form>
+        <form class="forget-form" action="/USTCOIN/resetPassword" method="post">
+          <h3 class="login-head"><i class="fa fa-lg fa-fw fa-lock"></i>找回密码</h3>
+          	<div class="form-group">
+            <label class="control-label">手机号码</label>
+            <input class="form-control" type="text" name="rephone" id="phone" placeholder="13000000000" onmouseout="checkPhone()">
+            </div>
+            <div class="form-group">
+            <label class="control-label" >新密码</label>
+            <input class="form-control" type="password" name="newpassword" placeholder="Password" onblur="checkPassword();" id="newpassword">
+          	</div>
+          	<div class="form-group">
+            <label class="control-label">重复密码</label>
+            <input class="form-control" type="password"  placeholder="Password" id="repassword" onblur="checkRepassword();">
+          	<label id="msg" style="display:none;">两次密码不一致</label>
+          	</div>
+            <div class="form-group">
+	            <div>
+	            <label class="control-label">验证码</label>
+	            </div>
+	            <div>
+	            <input class="form-control" type="text" name="smscode" style="width:170px;float:left;" >
+	            <input type="button" class="btn btn-default" value="获取验证码" name="yzm" id="yzm" onclick="fn1();" style="width:95px;height:37px;float:left;">
+	            </div>
+          	</div>
+          	<div></div>
+	        <div class="form-group btn-container" style="padding-top:40px">
+	            <input type="submit" class="btn btn-primary btn-block" value="重置密码">
+	        </div>
+          <div class="form-group mt-3">
+            <p class="semibold-text mb-0"><a href="#" data-toggle="flip"><i class="fa fa-angle-left fa-fw"></i> 返回登录界面</a></p>
+          </div>
+        </form>
+        
+      </div>
+    </section>
+    <!-- Essential javascripts for application to work-->
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <!-- The javascript plugin to display page loading on top-->
+    <script src="js/plugins/pace.min.js"></script>
+    <script type="text/javascript">
+      // Login Page Flipbox control
+      $('.login-content [data-toggle="flip"]').click(function() {
+      	$('.login-box').toggleClass('flipped');
+      	return false;
+      });
+    </script>
+  </body>
+</html>

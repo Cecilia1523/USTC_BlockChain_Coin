@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.kdrb.kdrb.mapper.UserMapper">
+
+    <select id="selectUserByUserName" parameterType="String" resultType="com.lx.kdrb.kdrb.domain.User">
+        select id,
+       username,
+       password,
+       phone,
+       email,
+       is_hasWallet isHasWallet,
+       creat_by creatBy,
+       creat_time creatTime,
+       update_time updateTime,
+       update_by updateBy,
+       is_del isDel,
+       version
+from kdrb_user
+where username=#{username}
+    </select>
+
+    <insert id="insertUser" parameterType="com.lx.kdrb.kdrb.domain.User">
+        insert into kdrb_user (id,username, password, phone, email,
+         is_hasWallet)
+VALUES (#{id},#{username},#{password},#{phone},#{email},
+#{isHasWallet})
+    </insert>
+
+    <select id="selectUser" parameterType="com.lx.kdrb.kdrb.domain.User" resultType="com.lx.kdrb.kdrb.domain.User">
+        select id,
+       username,
+       password,
+       phone,
+       email,
+       is_hasWallet isHasWallet,
+       creat_by creatBy,
+       creat_time creatTime,
+       update_time updateTime,
+       update_by updateBy,
+       is_del isDel,
+       version
+from kdrb_user
+where username=#{username} and password=#{password}
+    </select>
+
+    <update id="applyAccount">
+        update kdrb_user set  is_hasWallet="0"
+    </update>
+</mapper>

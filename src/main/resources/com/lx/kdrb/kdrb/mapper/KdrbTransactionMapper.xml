@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lx.kdrb.kdrb.mapper.KdrbTransactionMapper">
+
+    <select id="selectToHistory" parameterType="String" resultType="com.lx.kdrb.kdrb.domain.KdrbTransaction">
+       select id, `from`, `to`, amount, txHash, time, status
+from `kdrb_transaction` where `from`=#{payAddress}
+    </select>
+
+    <insert id="insertKdrbTransaction" parameterType="com.lx.kdrb.kdrb.domain.KdrbTransaction">
+        insert into kdrb_transaction (id,`from`,`to`,amount,txHash,time)
+VALUES (#{id},#{from},#{to},#{amount},#{txHash},#{time})
+    </insert>
+
+    <select id="reciveHistory" parameterType="String" resultType="com.lx.kdrb.kdrb.domain.KdrbTransaction">
+       select id, `from`, `to`, amount, txHash, time, status
+from `kdrb_transaction` where `to`=#{payAddress}
+    </select>
+
+</mapper>

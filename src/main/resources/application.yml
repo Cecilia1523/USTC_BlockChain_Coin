@@ -1,0 +1,25 @@
+server:
+  port: 8888
+spring:
+  application:
+    name: kdrb
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/kdrb?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: 1234
+  redis:
+      host: localhost
+      port: 6379
+feign:
+  hystrix:
+    enabled: false
+  httpclient:
+    enabled: true
+  client:
+    config:
+      default:   #配置全局的feign的调用超时时间  如果 有指定的服务配置 默认的配置不会生效
+        connectTimeout: 600000 # 指定的是 消费者 连接服务提供者的连接超时时间 是否能连接  单位是毫秒
+        readTimeout: 800000  # 指定的是调用服务提供者的 服务 的超时时间（）  单位是毫秒
+addr:
+  url: localhost:8081

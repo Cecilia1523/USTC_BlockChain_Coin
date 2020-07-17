@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- 页面meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>科大软币</title>
+    <meta name="description" content="科大软币">
+    <meta name="keywords" content="科大软币">
+    <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="../plugins/elementui/index.css">
+    <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style type="text/css">
+        .el-main {
+            position: absolute;
+            top: 70px;
+            bottom: 0px;
+            left: 200px;
+            right: 10px;
+            padding: 0;
+        }
+    </style>
+</head>
+<body class="hold-transition skin-purple sidebar-mini">
+<div id="app">
+    <el-container>
+        <el-header class="main-header" style="height:70px;">
+            <nav class="navbar navbar-static-top" :class=''>
+                <!-- Logo -->
+                <a href="#" class="logo" style="text-align:center">
+                        <span class="logo-lg"><img src="../img/logo.png">
+                        </span>
+                </a>
+                <div class="right-menu">
+
+                    <el-dropdown class="avatar-container right-menu-item" trigger="click">
+                        <div class="avatar-wrapper">
+                            <img src="../img/user2-160x160.jpg" class="user-avatar">
+                            <!--展示用户名-->
+                            {{username}}
+                        </div>
+
+                    </el-dropdown>
+                    <el-button icon="el-icon-switch-button" @click="exit()">退出</el-button>
+                </div>
+            </nav>
+        </el-header>
+        <el-container>
+            <el-aside width="200px">
+                <el-menu>
+                    <el-submenu v-for="menu in menuList" :index="menu.path">
+                        <template slot="title">
+                            <i class="fa" :class="menu.icon"></i>
+                            {{menu.title}}
+                        </template>
+                        <template v-for="child in menu.children">
+                            <el-menu-item :index="child.path">
+                                <a :href="child.linkUrl" target="right"  @click="mining(child.linkUrl)">{{child.title}}</a>
+                            </el-menu-item>
+                        </template>
+                    </el-submenu>
+                </el-menu>
+            </el-aside>
+            <el-container>
+                <iframe name="right" class="el-main" src="welcome.html" width="100%" height="580px"
+                        frameborder="0"></iframe>
+            </el-container>
+        </el-container>
+    </el-container>
+</div>
+</body>
+<!-- 引入组件库 -->
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/axios-0.18.0.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            username: {},
+            menuList: [],
+            backend_url: "http://localhost:8888",
+        },
+        created() {
+
+        },
+        mounted: function () {
+            this.getUserImformation();
+        },
+        methods: {
+            //退出功能
+            exit() {
+                parent.location.href="/pages/login.html"
+            },
+            getUserImformation: function () {
+                axios.get("/user/getUserImformation").then((response) => {
+                        if (response.data.flag) {
+                            this.username=response.data.data.username;
+                            if (response.data.data.isHasWallet == 1) {
+
+                                this.menuList = [{
+                                    "path": "1",
+                                    "title": "钱包管理",
+                                    "icon": "fa-dashboard",
+                                    "children": [
+                                        {
+                                            "path": "/1-1",
+                                            "title": "申请钱包",
+                                            "linkUrl": "wallet.html",
+                                            "children": []
+                                        },
+                                    ]
+                                },]
+
+                            }
+                            if (response.data.data.isHasWallet == 0) {
+                                this.menuList = [
+                                    {
+                                        "path": "1",
+                                        "title": "钱包管理",
+                                        "icon": "fa-dashboard",
+                                        "children": [
+                                            {
+                                                "path": "/1-1",
+                                                "title": "开始挖矿",
+                                                "children": [],
+                                            },
+                                            {
+                                                "path": "/1-2",
+                                                "title": "资产查询",
+                                                "linkUrl": "balance.html",
+                                                "children": []
+                                            },
+                                        ]
+                                    },
+                                    {
+                                        "path": "2",
+                                        "title": "交易操作",
+                                        "icon": "fa-user-md",
+                                        "children": [
+                                            {
+                                                "path": "/2-1",
+                                                "title": "付款",
+                                                "linkUrl": "payment.html",
+                                                "children": []
+                                            },
+                                            {
+                                                "path": "/2-2",
+                                                "title": "收款",
+                                                "linkUrl": "Ccolection.html",
+                                                "children": []
+                                            },
+                                            {
+                                                "path": "/2-3",
+                                                "title": "付款记录",
+                                                "linkUrl": "payment_history.html",
+                                                "children": []
+                                            },
+                                            {
+                                                "path": "/2-34",
+                                                "title": "收款记录",
+                                                "linkUrl": "collection_history.html",
+                                                "children": []
+                                            },
+
+                                        ]
+                                    },
+
+                                ]
+                            }
+                        }else{
+                            this.$message.error(response.data.message);
+                            window.location.href="/pages/login.html"
+                        }
+                    }
+                )
+            },
+            mining(test) {
+                if (test==undefined){
+                    //开始挖矿
+                    axios.get("/wallet//mining").then((response)=>{
+                        this.$message(response.data.message)
+                    })
+                }
+            }
+
+
+        }
+
+
+    });
+
+
+    $(function () {
+        var wd = 200;
+        $(".el-main").css('width', $('body').width() - wd + 'px');
+    });
+</script>
+</html>

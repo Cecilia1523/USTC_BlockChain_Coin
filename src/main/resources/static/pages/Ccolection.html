@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ko" lang="ko">
+<head>
+    <title>付款</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <script src="../js/qrcode.js"></script>
+    <script src="../js/plugins/qrcode.min.js"></script>
+    <script src="../js/jquery.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <P>显示钱包账户地址</P>
+    <div >{{address}}</div>
+    <div class="qrcode" ref="qrCodeUrl" style="margin-top: 50px"></div>
+
+</div>
+<script src="../js/vue.js"></script>
+<script src="../plugins/elementui/index.js"></script>
+<script src="../js/healthmobile.js"></script>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script type="text/javascript">
+    var vue = new Vue({
+        el: '#app',
+        data:{
+            backend_url:"http://localhost:8888",
+            address: "",
+        },
+        //钩子函数，VUE对象初始化完成后自动执行
+        created() {
+            this.queryAddress();
+        },
+        methods: {
+            queryAddress(){
+                axios.get("/wallet/getAccountMessage").then((response)=>{
+                    if (response.data.flag){
+                        this.address=response.data.data.address
+                        this.creatQrCode(this.address)
+                    }else{
+                        this.message.error(response.data.message)
+                    }
+                })
+            },
+            creatQrCode(address) {
+                var qrcode = new QRCode(this.$refs.qrCodeUrl, {
+                    text: address, // 需要转换为二维码的内容
+                    width: 290,
+                    height: 290,
+                    colorDark: '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.H
+                })
+            },
+
+        }
+    })
+</script>
+</body>
+</html>
